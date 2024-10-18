@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import JourneyForm from "./JourneyForm";
+import {
+  Fab,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material"; // Import Dialog components
+import AddIcon from "@mui/icons-material/Add";
 
 function JourneyApp() {
   const [formData, setFormData] = useState({
     journey_date: "",
-    train_number: "", // Make sure this is set to an empty string initially
+    train_number: "",
     departure_station: "",
     arrival_station: "",
     pnr_number: "",
@@ -24,6 +33,8 @@ function JourneyApp() {
     return savedJourneys ? JSON.parse(savedJourneys) : [];
   });
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to manage dialog visibility
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -31,7 +42,7 @@ function JourneyApp() {
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox" ? checked : value, // Use value directly
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -58,17 +69,15 @@ function JourneyApp() {
       notes: "",
     });
     alert("Journey added successfully!");
+    setIsDialogOpen(false); // Close the dialog after submission
+  };
+
+  const toggleDialog = () => {
+    setIsDialogOpen((prev) => !prev); // Toggle dialog visibility
   };
 
   return (
     <div>
-      <h2>Journey Form</h2>
-      <JourneyForm
-        formData={formData}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        submitButtonText="Submit"
-      />
       <h2>Journey List</h2>
       {journeys.length > 0 ? (
         <ul>
@@ -84,6 +93,36 @@ function JourneyApp() {
       ) : (
         <p>No journeys added yet.</p>
       )}
+
+      <Dialog open={isDialogOpen} onClose={toggleDialog}>
+        <DialogTitle>Add Journey</DialogTitle>
+        <DialogContent>
+          <JourneyForm
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            submitButtonText="Submit"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={toggleDialog} color="primary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Fab
+        color="primary"
+        aria-label="add"
+        onClick={toggleDialog} // Handle click to toggle dialog visibility
+        style={{
+          position: "fixed",
+          bottom: "16px",
+          right: "16px",
+        }}
+      >
+        <AddIcon />
+      </Fab>
     </div>
   );
 }
