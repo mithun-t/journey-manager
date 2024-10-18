@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -15,15 +15,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 
-const JourneyFormDialog = ({
-  open,
-  onClose,
-  onAddJourney,
-  trainNames,
-  sources,
-  destinations,
-  paymentModes,
-}) => {
+const JourneyFormDialog = ({ open, onClose, onAddJourney }) => {
   const [newJourney, setNewJourney] = useState({
     type: "",
     trainName: "",
@@ -41,6 +33,28 @@ const JourneyFormDialog = ({
     comments: "",
   });
 
+  const [trainNames, setTrainNames] = useState([]);
+  const [sources, setSources] = useState([]);
+  const [destinations, setDestinations] = useState([]);
+  const [paymentModes, setPaymentModes] = useState([]);
+
+  useEffect(() => {
+    // Fetching data from local storage
+    const fetchData = () => {
+      const trains = JSON.parse(localStorage.getItem("trainNames")) || [];
+      const src = JSON.parse(localStorage.getItem("sources")) || [];
+      const dest = JSON.parse(localStorage.getItem("destinations")) || [];
+      const modes = JSON.parse(localStorage.getItem("paymentModes")) || [];
+
+      setTrainNames(trains);
+      setSources(src);
+      setDestinations(dest);
+      setPaymentModes(modes);
+    };
+
+    fetchData();
+  }, []);
+
   const handleInputChange = (e) => {
     setNewJourney({ ...newJourney, [e.target.name]: e.target.value });
   };
@@ -56,6 +70,19 @@ const JourneyFormDialog = ({
 
   const handleAddJourney = () => {
     onAddJourney(newJourney);
+    saveJourneyToLocalStorage(newJourney);
+    resetForm();
+  };
+
+  const saveJourneyToLocalStorage = (journey) => {
+    const existingJourneys = JSON.parse(localStorage.getItem("journeys")) || [];
+    localStorage.setItem(
+      "journeys",
+      JSON.stringify([...existingJourneys, journey])
+    );
+  };
+
+  const resetForm = () => {
     setNewJourney({
       type: "",
       trainName: "",
@@ -101,14 +128,16 @@ const JourneyFormDialog = ({
                 value={newJourney.trainName}
                 onChange={handleSelectChange}
               >
-                {trainNames && trainNames.length > 0 ? (
+                {trainNames.length > 0 ? (
                   trainNames.map((train) => (
                     <MenuItem key={train} value={train}>
                       {train}
                     </MenuItem>
                   ))
                 ) : (
-                  <p>No options available</p>
+                  <MenuItem value="">
+                    <em>No options available</em>
+                  </MenuItem>
                 )}
               </Select>
             </FormControl>
@@ -122,14 +151,16 @@ const JourneyFormDialog = ({
               value={newJourney.source}
               onChange={handleSelectChange}
             >
-              {sources && sources.length > 0 ? (
+              {sources.length > 0 ? (
                 sources.map((source) => (
                   <MenuItem key={source} value={source}>
                     {source}
                   </MenuItem>
                 ))
               ) : (
-                <p>No options available</p>
+                <MenuItem value="">
+                  <em>No options available</em>
+                </MenuItem>
               )}
             </Select>
           </FormControl>
@@ -142,11 +173,17 @@ const JourneyFormDialog = ({
               value={newJourney.destination}
               onChange={handleSelectChange}
             >
-              {destinations?.map((destination) => (
-                <MenuItem key={destination} value={destination}>
-                  {destination}
+              {destinations.length > 0 ? (
+                destinations.map((destination) => (
+                  <MenuItem key={destination} value={destination}>
+                    {destination}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem value="">
+                  <em>No options available</em>
                 </MenuItem>
-              ))}
+              )}
             </Select>
           </FormControl>
 
@@ -224,14 +261,16 @@ const JourneyFormDialog = ({
               value={newJourney.paymentMode}
               onChange={handleSelectChange}
             >
-              {paymentModes && paymentModes.length > 0 ? (
+              {paymentModes.length > 0 ? (
                 paymentModes.map((mode) => (
                   <MenuItem key={mode} value={mode}>
                     {mode}
                   </MenuItem>
                 ))
               ) : (
-                <p>No options available</p>
+                <MenuItem value="">
+                  <em>No options available</em>
+                </MenuItem>
               )}
             </Select>
           </FormControl>
@@ -272,6 +311,8 @@ const JourneyFormDialog = ({
             onChange={handleInputChange}
             fullWidth
             margin="normal"
+            multiline
+            rows={4}
           />
         </Box>
       </DialogContent>

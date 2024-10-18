@@ -1,13 +1,12 @@
-// Master.js
 import React from "react";
+import { Button } from "@mui/material";
 
-function Master() {
+const Master = () => {
   return (
     <div>
-      <h1>Master</h1>
-      <p>This is the Master page.</p>
+      <Button variant="contained">Add Journey</Button>
     </div>
   );
-}
+};
 
 export default Master;

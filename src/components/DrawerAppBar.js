@@ -22,9 +22,9 @@ import DarkModeIcon from "@mui/icons-material/DarkMode"; // Import icon for dark
 import LightModeIcon from "@mui/icons-material/LightMode"; // Import icon for light mode
 
 // Import components
-import JourneyList from "./JourneyList"; // Journeys component
 import Dashboard from "./Dashboard"; // Dashboard component
-import Master from "./Master"; // Master component
+import MasterForm from "./MasterForm"; // Master component
+import JourneyApp from "./JourneyApp";
 
 const drawerWidth = 240;
 const navItems = ["Home", "Journeys", "Master"];
@@ -84,9 +84,17 @@ function DrawerAppBar(props) {
       case "Home":
         return <Dashboard />;
       case "Journeys":
-        return <JourneyList />;
+        return <JourneyApp />;
       case "Master":
-        return <Master />;
+        return (
+          <>
+            <MasterForm endpoint="trains" name="Train" />
+            <MasterForm endpoint="stations" name="Station" />
+            <MasterForm endpoint="statuses" name="Status" />
+            <MasterForm endpoint="berths" name="Berth" />
+            <MasterForm endpoint="payment_modes" name="Payment Mode" />
+          </>
+        );
       default:
         return <Dashboard />;
     }
