@@ -5,7 +5,7 @@ import EditIcon from "@mui/icons-material/Edit";
 
 const MasterForm = (props) => {
   const [masters, setMasters] = useState([]);
-  const [masterData, setMasterData] = useState({ code: "", name: "" });
+  const [masterData, setMasterData] = useState({ name: "" });
   const [editingMaster, setEditingMaster] = useState(null);
 
   // Fetch data from localStorage
@@ -28,8 +28,8 @@ const MasterForm = (props) => {
     if (editingMaster) {
       // Update existing master data
       const updatedMasters = masters.map((master) =>
-        master.id === editingMaster.id
-          ? { ...editingMaster, ...masterData }
+        master.name === editingMaster.name // Match by name instead of id
+          ? { ...masterData }
           : master
       );
       localStorage.setItem(props.endpoint, JSON.stringify(updatedMasters));
@@ -38,8 +38,7 @@ const MasterForm = (props) => {
     } else {
       // Add new master data
       const newMaster = {
-        id: Date.now(), // Simple unique ID generator
-        ...masterData,
+        name: masterData.name, // Only store name
       };
       const updatedMasters = [...masters, newMaster];
       localStorage.setItem(props.endpoint, JSON.stringify(updatedMasters));
@@ -49,18 +48,18 @@ const MasterForm = (props) => {
   };
 
   const handleEdit = (data) => {
-    setMasterData(data);
+    setMasterData({ name: data.name }); // Set name for editing
     setEditingMaster(data);
   };
 
-  const handleDelete = (id) => {
-    const updatedMasters = masters.filter((master) => master.id !== id);
+  const handleDelete = (name) => {
+    const updatedMasters = masters.filter((master) => master.name !== name); // Match by name
     localStorage.setItem(props.endpoint, JSON.stringify(updatedMasters));
     setMasters(updatedMasters);
   };
 
   const resetForm = () => {
-    setMasterData({ code: "", name: "" });
+    setMasterData({ name: "" }); // Reset only name
     setEditingMaster(null);
   };
 
@@ -70,22 +69,12 @@ const MasterForm = (props) => {
       <form onSubmit={handleSubmit}>
         <TextField
           size="small"
-          label={`${props.name} Code`}
-          name="code"
-          value={masterData.code}
-          onChange={handleChange}
-          required
-          fullWidth
-        />
-        <TextField
-          size="small"
-          label={`${props.name} Name`}
+          label={`${props.name} Name`} // Change label to only reflect name
           name="name"
           value={masterData.name}
           onChange={handleChange}
           required
           fullWidth
-          style={{ marginTop: 10 }}
         />
         <Button
           size="small"
@@ -99,17 +88,22 @@ const MasterForm = (props) => {
       </form>
 
       <List>
-        {masters.map((data) => (
-          <ListItem key={data.id}>
-            {data.name} ({data.code})
-            <IconButton edge="end" onClick={() => handleEdit(data)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton edge="end" onClick={() => handleDelete(data.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItem>
-        ))}
+        {masters.map(
+          (
+            data,
+            index // Using index as key since there's no id
+          ) => (
+            <ListItem key={index}>
+              {data.name} {/* Display only name */}
+              <IconButton edge="end" onClick={() => handleEdit(data)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton edge="end" onClick={() => handleDelete(data.name)}>
+                <DeleteIcon />
+              </IconButton>
+            </ListItem>
+          )
+        )}
       </List>
     </div>
   );

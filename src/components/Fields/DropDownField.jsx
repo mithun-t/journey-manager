@@ -7,14 +7,14 @@ function DropDownField({ label, value, name, handleChange, datas }) {
       select
       label={label}
       name={name}
-      value={value?.code || ""} // Use the code as value
+      value={value || ""} // Ensure value is set to an empty string if undefined
       onChange={handleChange}
       fullWidth
       size="small"
     >
-      {datas.map((data) => (
-        <MenuItem key={data.id} value={JSON.stringify(data)}>
-          {data.name} {/* Display the name as the visible text */}
+      {datas.map((data, index) => (
+        <MenuItem key={index} value={data.name}>
+          {data.name} {/* Set value to data.name */}
         </MenuItem>
       ))}
     </TextField>
