@@ -44,11 +44,11 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <Paper sx={{ width: "100%", overflowX: "auto" }}>
+      {" "}
+      {/* Enable horizontal scroll */}
+      <TableContainer>
         <Table size="small" stickyHeader aria-label="sticky table">
-          {" "}
-          {/* Dense table */}
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -65,50 +65,43 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
           <TableBody>
             {journeys
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((journey, index) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={journey.id}
-                  >
-                    {columns.map((column) => {
-                      if (column.id === "actions") {
-                        return (
-                          <TableCell key={column.id}>
-                            <IconButton
-                              onClick={() => handleEdit(index)}
-                              aria-label="edit"
-                              color="primary"
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              onClick={() => handleDelete(index)}
-                              aria-label="delete"
-                              color="error"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        );
-                      } else {
-                        return (
-                          <TableCell
-                            key={column.id}
-                            align={column.align || "left"}
+              .map((journey, index) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={journey.id}>
+                  {columns.map((column) => {
+                    if (column.id === "actions") {
+                      return (
+                        <TableCell key={column.id}>
+                          <IconButton
+                            onClick={() => handleEdit(index)}
+                            aria-label="edit"
+                            color="primary"
                           >
-                            {column.id === "journey_date"
-                              ? formatDate(journey[column.id]) // Format journey date
-                              : journey[column.id]}
-                          </TableCell>
-                        );
-                      }
-                    })}
-                  </TableRow>
-                );
-              })}
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleDelete(index)}
+                            aria-label="delete"
+                            color="error"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      );
+                    } else {
+                      return (
+                        <TableCell
+                          key={column.id}
+                          align={column.align || "left"}
+                        >
+                          {column.id === "journey_date"
+                            ? formatDate(journey[column.id])
+                            : journey[column.id]}
+                        </TableCell>
+                      );
+                    }
+                  })}
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
