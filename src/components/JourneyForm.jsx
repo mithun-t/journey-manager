@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-} from "@mui/material";
-import DropDownField from "./Fields/DropDownField"; // Assuming you have a reusable dropdown component
+import { Button, Checkbox, FormControlLabel, Grid } from "@mui/material";
+import DropDownField from "./Fields/DropDownField";
+import CustomTextField from "./Fields/CustomTextField"; // Reusable TextField component
 
 function JourneyForm({
   formData,
@@ -22,7 +17,6 @@ function JourneyForm({
   const [paymentModes, setPaymentModes] = useState([]);
 
   useEffect(() => {
-    // Fetching master data from localStorage
     const storedTrains = JSON.parse(localStorage.getItem("trains")) || [];
     const storedStations = JSON.parse(localStorage.getItem("stations")) || [];
     const storedStatuses = JSON.parse(localStorage.getItem("statuses")) || [];
@@ -39,18 +33,17 @@ function JourneyForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} marginTop={1}>
         <Grid item xs={12} sm={6}>
-          <TextField
-            size="small"
-            fullWidth
-            type="date"
-            name="journey_date"
+          <CustomTextField
             label="Journey Date"
-            value={formData?.journey_date || ""}
+            name="journey_date"
+            type="date"
+            value={
+              formData?.journey_date || new Date().toISOString().substr(0, 10)
+            }
             onChange={handleChange}
             required
-            InputLabelProps={{ shrink: true }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -81,11 +74,9 @@ function JourneyForm({
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            size="small"
-            fullWidth
-            name="pnr_number"
+          <CustomTextField
             label="PNR Number"
+            name="pnr_number"
             value={formData?.pnr_number || ""}
             onChange={handleChange}
             required
@@ -110,31 +101,27 @@ function JourneyForm({
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            size="small"
-            fullWidth
-            type="number"
-            name="price"
+          <CustomTextField
             label="Price"
+            name="price"
+            type="number"
             value={formData?.price || ""}
             onChange={handleChange}
             required
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            size="small"
-            fullWidth
-            type="date"
-            name="booked_date"
+          <CustomTextField
             label="Booked Date"
-            value={formData?.booked_date || ""}
+            name="booked_date"
+            type="date"
+            value={
+              formData?.booked_date || new Date().toISOString().substr(0, 10)
+            }
             onChange={handleChange}
             required
-            InputLabelProps={{ shrink: true }}
           />
         </Grid>
-
         <Grid item xs={12} sm={6}>
           <DropDownField
             label="Payment Mode"
@@ -144,23 +131,18 @@ function JourneyForm({
             datas={paymentModes}
           />
         </Grid>
-
         {formData.payment_mode === "Credit" && (
           <Grid item xs={12} sm={6}>
-            <TextField
-              size="small"
-              fullWidth
-              type="date"
-              name="bill_date"
+            <CustomTextField
               label="Bill Date"
+              name="bill_date"
+              type="date"
               value={formData?.bill_date || ""}
               onChange={handleChange}
               required
-              InputLabelProps={{ shrink: true }}
             />
           </Grid>
         )}
-
         <Grid item xs={12}>
           <FormControlLabel
             control={
@@ -178,11 +160,9 @@ function JourneyForm({
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            size="small"
-            fullWidth
-            name="notes"
+          <CustomTextField
             label="Notes"
+            name="notes"
             multiline
             rows={2}
             value={formData?.notes || ""}
@@ -190,7 +170,6 @@ function JourneyForm({
           />
         </Grid>
       </Grid>
-
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <Button
@@ -202,7 +181,6 @@ function JourneyForm({
           >
             {submitButtonText}
           </Button>
-
           <Button
             size="small"
             variant="contained"

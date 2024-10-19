@@ -79,7 +79,7 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
                             <IconButton
                               onClick={() => handleDelete(index)}
                               aria-label="delete"
-                              color="secondary"
+                              color="error"
                             >
                               <DeleteIcon />
                             </IconButton>
