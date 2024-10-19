@@ -37,10 +37,18 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
     setPage(0);
   };
 
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "2-digit" };
+    return new Date(dateString).toLocaleDateString("en-GB", options);
+  };
+
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table size="small" stickyHeader aria-label="sticky table">
+          {" "}
+          {/* Dense table */}
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -91,7 +99,9 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
                             key={column.id}
                             align={column.align || "left"}
                           >
-                            {journey[column.id]}
+                            {column.id === "journey_date"
+                              ? formatDate(journey[column.id]) // Format journey date
+                              : journey[column.id]}
                           </TableCell>
                         );
                       }

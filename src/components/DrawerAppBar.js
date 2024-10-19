@@ -25,9 +25,10 @@ import LightModeIcon from "@mui/icons-material/LightMode"; // Import icon for li
 import Dashboard from "./Dashboard"; // Dashboard component
 import MasterForm from "./MasterForm"; // Master component
 import JourneyApp from "./JourneyApp";
+import BackupRestore from "./BackupRestore";
 
 const drawerWidth = 240;
-const navItems = ["Home", "Journeys", "Master"];
+const navItems = ["Home", "Journeys", "Master", "Backup"];
 
 function DrawerAppBar(props) {
   const { window } = props;
@@ -85,6 +86,8 @@ function DrawerAppBar(props) {
         return <Dashboard />;
       case "Journeys":
         return <JourneyApp />;
+      case "Backup":
+        return <BackupRestore />;
       case "Master":
         return (
           <>
