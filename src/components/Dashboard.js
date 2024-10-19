@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  Chip,
+} from "@mui/material";
 
 const Dashboard = () => {
   const [journeys, setJourneys] = useState([]);
 
-  // Fetch journeys from local storage
   useEffect(() => {
     const storedJourneys = localStorage.getItem("journeys");
     if (storedJourneys) {
@@ -15,40 +22,205 @@ const Dashboard = () => {
   // Calculate statistics
   const totalJourneys = journeys.length;
   const totalPrice = journeys.reduce(
-    (sum, journey) => sum + Number(journey.price),
+    (sum, journey) => sum + parseFloat(journey.price || 0),
     0
   );
   const averagePrice = totalJourneys
     ? (totalPrice / totalJourneys).toFixed(2)
     : 0;
 
+  // Journey status breakdown
+  const statusCounts = journeys.reduce((acc, journey) => {
+    if (journey.status) {
+      acc[journey.status] = (acc[journey.status] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  // Payment mode breakdown
+  const paymentModes = journeys.reduce((acc, journey) => {
+    if (journey.payment_mode) {
+      acc[journey.payment_mode] = (acc[journey.payment_mode] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  // Most frequent routes
+  const routes = journeys.reduce((acc, journey) => {
+    if (journey.departure_station && journey.arrival_station) {
+      const route = `${journey.departure_station} - ${journey.arrival_station}`;
+      acc[route] = (acc[route] || 0) + 1;
+    }
+    return acc;
+  }, {});
+  const topRoutes = Object.entries(routes)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  // Monthly spending trend
+  const monthlySpending = journeys.reduce((acc, journey) => {
+    if (journey.journey_date) {
+      const month = new Date(journey.journey_date).toLocaleString("default", {
+        month: "long",
+      });
+      acc[month] = (acc[month] || 0) + parseFloat(journey.price || 0);
+    }
+    return acc;
+  }, {});
+
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  };
+
+  // Get most common status safely
+  const mostCommonStatus =
+    Object.entries(statusCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Dashboard
+      <Typography variant="h4" gutterBottom>
+        Journey Dashboard
       </Typography>
+
       <Grid container spacing={3}>
-        {/* Total Journeys Card */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Paper sx={{ p: 2, textAlign: "center" }}>
-            <Typography variant="h5">Total Journeys</Typography>
+            <Typography variant="h6">Total Journeys</Typography>
             <Typography variant="h4">{totalJourneys}</Typography>
           </Paper>
         </Grid>
-
-        {/* Total Price Card */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Paper sx={{ p: 2, textAlign: "center" }}>
-            <Typography variant="h5">Total Price</Typography>
+            <Typography variant="h6">Total Spent</Typography>
             <Typography variant="h4">₹{totalPrice.toFixed(2)}</Typography>
           </Paper>
         </Grid>
-
-        {/* Average Price Card */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Paper sx={{ p: 2, textAlign: "center" }}>
-            <Typography variant="h5">Average Price</Typography>
+            <Typography variant="h6">Average Fare</Typography>
             <Typography variant="h4">₹{averagePrice}</Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper sx={{ p: 2, textAlign: "center" }}>
+            <Typography variant="h6">Most Common Status</Typography>
+            <Typography variant="h4">{mostCommonStatus}</Typography>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={3} sx={{ mt: 3 }}>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Journey Status Breakdown
+            </Typography>
+            <List>
+              {Object.entries(statusCounts).map(([status, count], index) => (
+                <ListItem key={index} sx={{ justifyContent: "space-between" }}>
+                  <Typography>{status}</Typography>
+                  <Chip label={count} color="primary" />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Payment Mode Distribution
+            </Typography>
+            <List>
+              {Object.entries(paymentModes).map(([mode, count], index) => (
+                <ListItem key={index} sx={{ justifyContent: "space-between" }}>
+                  <Typography>{mode}</Typography>
+                  <Chip label={count} color="secondary" />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={3} sx={{ mt: 3 }}>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Monthly Spending Trend
+            </Typography>
+            <List>
+              {Object.entries(monthlySpending).map(([month, total], index) => (
+                <ListItem key={index} sx={{ justifyContent: "space-between" }}>
+                  <Typography>{month}</Typography>
+                  <Typography>₹{total.toFixed(2)}</Typography>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Top 5 Routes
+            </Typography>
+            <List>
+              {topRoutes.map(([route, count], index) => (
+                <ListItem key={index} sx={{ justifyContent: "space-between" }}>
+                  <Typography>{route}</Typography>
+                  <Chip label={count} color="primary" />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={3} sx={{ mt: 3 }}>
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Recent Journeys
+            </Typography>
+            <List>
+              {journeys
+                .slice(-5)
+                .reverse()
+                .map((journey, index) => (
+                  <ListItem
+                    key={index}
+                    sx={{ flexDirection: "column", alignItems: "flex-start" }}
+                  >
+                    <Typography variant="subtitle1">
+                      {journey.train_number || "N/A"}
+                    </Typography>
+                    <Typography variant="body2">
+                      {formatDate(journey.journey_date)} •{" "}
+                      {journey.departure_station || "N/A"} to{" "}
+                      {journey.arrival_station || "N/A"}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        mt: 1,
+                      }}
+                    >
+                      <Typography variant="subtitle1">
+                        ₹{journey.price || "N/A"}
+                      </Typography>
+                      <Chip
+                        label={journey.status || "N/A"}
+                        color="primary"
+                        size="small"
+                      />
+                    </Box>
+                  </ListItem>
+                ))}
+            </List>
           </Paper>
         </Grid>
       </Grid>
