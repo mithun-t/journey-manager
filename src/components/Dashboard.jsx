@@ -72,12 +72,25 @@ const Dashboard = () => {
   const mostCommonStatus =
     Object.entries(statusCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
+  const today = new Date();
+
+  const upcomingJourneys = journeys.filter(
+    (journey) =>
+      new Date(journey.journey_date) >= today && journey.status !== "Completed"
+  );
+
+  const completedJourneys = journeys.filter(
+    (journey) =>
+      journey.status === "Completed" || new Date(journey.journey_date) < today
+  );
+
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <Typography variant="h4" gutterBottom>
         Journey Dashboard
       </Typography>
 
+      {/* Dashboard Metrics */}
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
           <Paper sx={{ p: 2, textAlign: "center" }}>
@@ -105,6 +118,104 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
+      {/* Upcoming Journeys */}
+      <Grid container spacing={3} sx={{ mt: 3 }}>
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Upcoming Journeys
+            </Typography>
+            <List>
+              {upcomingJourneys.length ? (
+                upcomingJourneys.map((journey, index) => (
+                  <ListItem
+                    key={index}
+                    sx={{ flexDirection: "column", alignItems: "flex-start" }}
+                  >
+                    <Typography variant="subtitle1">
+                      {journey.train_number || "N/A"}
+                    </Typography>
+                    <Typography variant="body2">
+                      {formatDate(journey.journey_date)} •{" "}
+                      {journey.departure_station || "N/A"} to{" "}
+                      {journey.arrival_station || "N/A"}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        mt: 1,
+                      }}
+                    >
+                      <Typography variant="subtitle1">
+                        ₹{journey.price || "N/A"}
+                      </Typography>
+                      <Chip
+                        label={journey.status || "N/A"}
+                        color="primary"
+                        size="small"
+                      />
+                    </Box>
+                  </ListItem>
+                ))
+              ) : (
+                <Typography>No upcoming journeys.</Typography>
+              )}
+            </List>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Completed Journeys */}
+      <Grid container spacing={3} sx={{ mt: 3 }}>
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Completed Journeys
+            </Typography>
+            <List>
+              {completedJourneys.length ? (
+                completedJourneys.map((journey, index) => (
+                  <ListItem
+                    key={index}
+                    sx={{ flexDirection: "column", alignItems: "flex-start" }}
+                  >
+                    <Typography variant="subtitle1">
+                      {journey.train_number || "N/A"}
+                    </Typography>
+                    <Typography variant="body2">
+                      {formatDate(journey.journey_date)} •{" "}
+                      {journey.departure_station || "N/A"} to{" "}
+                      {journey.arrival_station || "N/A"}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        mt: 1,
+                      }}
+                    >
+                      <Typography variant="subtitle1">
+                        ₹{journey.price || "N/A"}
+                      </Typography>
+                      <Chip
+                        label={journey.status || "N/A"}
+                        color="primary"
+                        size="small"
+                      />
+                    </Box>
+                  </ListItem>
+                ))
+              ) : (
+                <Typography>No completed journeys.</Typography>
+              )}
+            </List>
+          </Paper>
+        </Grid>
+      </Grid>
+      {/* Journey Status Breakdown and Payment Modes */}
       <Grid container spacing={3} sx={{ mt: 3 }}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
@@ -137,7 +248,6 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
-
       <Grid container spacing={3} sx={{ mt: 3 }}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
@@ -166,53 +276,6 @@ const Dashboard = () => {
                   <Chip label={count} color="primary" />
                 </ListItem>
               ))}
-            </List>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={3} sx={{ mt: 3 }}>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Recent Journeys
-            </Typography>
-            <List>
-              {journeys
-                .slice(-5)
-                .reverse()
-                .map((journey, index) => (
-                  <ListItem
-                    key={index}
-                    sx={{ flexDirection: "column", alignItems: "flex-start" }}
-                  >
-                    <Typography variant="subtitle1">
-                      {journey.train_number || "N/A"}
-                    </Typography>
-                    <Typography variant="body2">
-                      {formatDate(journey.journey_date)} •{" "}
-                      {journey.departure_station || "N/A"} to{" "}
-                      {journey.arrival_station || "N/A"}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        mt: 1,
-                      }}
-                    >
-                      <Typography variant="subtitle1">
-                        ₹{journey.price || "N/A"}
-                      </Typography>
-                      <Chip
-                        label={journey.status || "N/A"}
-                        color="primary"
-                        size="small"
-                      />
-                    </Box>
-                  </ListItem>
-                ))}
             </List>
           </Paper>
         </Grid>
