@@ -16,16 +16,16 @@ import {
   Button,
   ThemeProvider,
   createTheme,
+  useMediaQuery,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu"; // Correct import for MenuIcon
-import DarkModeIcon from "@mui/icons-material/DarkMode"; // Import icon for dark mode
-import LightModeIcon from "@mui/icons-material/LightMode"; // Import icon for light mode
+import MenuIcon from "@mui/icons-material/Menu";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
-// Import components
-import Dashboard from "./Dashboard"; // Dashboard component
-import MasterForm from "./MasterForm"; // Master component
+import Dashboard from "./Dashboard";
 import JourneyApp from "./JourneyApp";
 import BackupRestore from "./BackupRestore";
+import Master from "./Master";
 
 const drawerWidth = 240;
 const navItems = ["Home", "Journeys", "Master", "Backup"];
@@ -34,7 +34,8 @@ function DrawerAppBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [activeComponent, setActiveComponent] = React.useState("Home");
-  const [darkMode, setDarkMode] = React.useState(false); // State for dark mode
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const [darkMode, setDarkMode] = React.useState(prefersDarkMode);
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -45,7 +46,6 @@ function DrawerAppBar(props) {
     setMobileOpen(false);
   };
 
-  // Handle theme toggle
   const handleThemeChange = () => {
     setDarkMode((prevMode) => !prevMode);
   };
@@ -76,7 +76,7 @@ function DrawerAppBar(props) {
 
   const theme = createTheme({
     palette: {
-      mode: darkMode ? "dark" : "light", // Use state for theme mode
+      mode: darkMode ? "dark" : "light",
     },
   });
 
@@ -89,15 +89,7 @@ function DrawerAppBar(props) {
       case "Backup":
         return <BackupRestore />;
       case "Master":
-        return (
-          <>
-            <MasterForm endpoint="trains" name="Train" />
-            <MasterForm endpoint="stations" name="Station" />
-            <MasterForm endpoint="statuses" name="Status" />
-            <MasterForm endpoint="berths" name="Berth" />
-            <MasterForm endpoint="payment_modes" name="Payment Mode" />
-          </>
-        );
+        return <Master />;
       default:
         return <Dashboard />;
     }
@@ -138,11 +130,10 @@ function DrawerAppBar(props) {
             </Box>
             <IconButton
               color="inherit"
-              onClick={handleThemeChange} // Toggle theme on click
+              onClick={handleThemeChange}
               aria-label="toggle dark mode"
             >
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}{" "}
-              {/* Change icon based on mode */}
             </IconButton>
           </Toolbar>
         </AppBar>

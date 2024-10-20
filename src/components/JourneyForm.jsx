@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, FormControlLabel, Grid } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Typography,
+} from "@mui/material";
 import DropDownField from "./Fields/DropDownField";
-import CustomTextField from "./Fields/CustomTextField"; // Reusable TextField component
+import CustomTextField from "./Fields/CustomTextField";
 
 function JourneyForm({
   formData,
@@ -30,6 +36,17 @@ function JourneyForm({
     setBerths(storedBerths);
     setPaymentModes(storedPaymentModes);
   }, []);
+
+  const handleCheckboxChange = (e) => {
+    handleChange(e);
+    const updatedStatus = e.target.checked ? "Completed" : "Pending";
+    handleChange({
+      target: {
+        name: "journey_status",
+        value: updatedStatus,
+      },
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -149,14 +166,22 @@ function JourneyForm({
               <Checkbox
                 name="journey_status_checked"
                 checked={formData.journey_status_checked || false}
-                onChange={handleChange}
+                onChange={handleCheckboxChange}
               />
             }
-            label={`Journey Status: ${formData?.journey_status || "Pending"}`}
-            style={{
-              color:
-                formData?.journey_status === "Completed" ? "green" : "orange",
-            }}
+            label={
+              <Typography
+                variant="h6"
+                sx={{
+                  color: formData?.journey_status_checked
+                    ? "lightgreen"
+                    : "orange",
+                }}
+              >
+                Journey Status:{" "}
+                {formData?.journey_status_checked ? "Completed" : "Pending"}
+              </Typography>
+            }
           />
         </Grid>
         <Grid item xs={12}>

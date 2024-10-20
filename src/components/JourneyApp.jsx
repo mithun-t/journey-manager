@@ -31,19 +31,21 @@ function JourneyApp() {
 
   const [journeys, setJourneys] = useState(() => {
     const savedJourneys = localStorage.getItem("journeys");
-    return savedJourneys ? JSON.parse(savedJourneys) : [];
+    return savedJourneys
+      ? JSON.parse(savedJourneys).sort((a, b) =>
+          a.journey_date.localeCompare(b.journey_date)
+        )
+      : [];
   });
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // Dialog visibility
-  const [isEditing, setIsEditing] = useState(false); // Track whether editing
-  const [currentJourneyIndex, setCurrentJourneyIndex] = useState(null); // Track which journey is being edited
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentJourneyIndex, setCurrentJourneyIndex] = useState(null);
 
-  // Open dialog for adding a new journey or editing an existing one
   const toggleDialog = () => {
     setIsDialogOpen((prev) => !prev);
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -52,19 +54,16 @@ function JourneyApp() {
     }));
   };
 
-  // Handle form submit (add or update)
   const handleSubmit = (e) => {
     e.preventDefault();
     let updatedJourneys;
 
     if (isEditing && currentJourneyIndex !== null) {
-      // Update existing journey
       updatedJourneys = [...journeys];
       updatedJourneys[currentJourneyIndex] = formData;
       setIsEditing(false);
       setCurrentJourneyIndex(null);
     } else {
-      // Add a new journey
       updatedJourneys = [...journeys, formData];
     }
 
@@ -79,7 +78,6 @@ function JourneyApp() {
     );
   };
 
-  // Reset the form
   const resetForm = () => {
     setFormData({
       journey_date: "",
@@ -99,7 +97,6 @@ function JourneyApp() {
     });
   };
 
-  // Edit a journey
   const handleEdit = (index) => {
     setFormData(journeys[index]);
     setCurrentJourneyIndex(index);
@@ -107,7 +104,6 @@ function JourneyApp() {
     toggleDialog();
   };
 
-  // Delete a journey
   const handleDelete = (index) => {
     const updatedJourneys = journeys.filter((_, i) => i !== index);
     setJourneys(updatedJourneys);
@@ -152,8 +148,8 @@ function JourneyApp() {
         color="primary"
         aria-label="add"
         onClick={() => {
-          resetForm(); // Reset form before adding new journey
-          setIsEditing(false); // Ensure we are in 'add' mode
+          resetForm();
+          setIsEditing(false);
           toggleDialog();
         }}
         style={{

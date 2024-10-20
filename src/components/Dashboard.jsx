@@ -19,7 +19,6 @@ const Dashboard = () => {
     }
   }, []);
 
-  // Calculate statistics
   const totalJourneys = journeys.length;
   const totalPrice = journeys.reduce(
     (sum, journey) => sum + parseFloat(journey.price || 0),
@@ -29,7 +28,6 @@ const Dashboard = () => {
     ? (totalPrice / totalJourneys).toFixed(2)
     : 0;
 
-  // Journey status breakdown
   const statusCounts = journeys.reduce((acc, journey) => {
     if (journey.status) {
       acc[journey.status] = (acc[journey.status] || 0) + 1;
@@ -37,7 +35,6 @@ const Dashboard = () => {
     return acc;
   }, {});
 
-  // Payment mode breakdown
   const paymentModes = journeys.reduce((acc, journey) => {
     if (journey.payment_mode) {
       acc[journey.payment_mode] = (acc[journey.payment_mode] || 0) + 1;
@@ -45,7 +42,6 @@ const Dashboard = () => {
     return acc;
   }, {});
 
-  // Most frequent routes
   const routes = journeys.reduce((acc, journey) => {
     if (journey.departure_station && journey.arrival_station) {
       const route = `${journey.departure_station} - ${journey.arrival_station}`;
@@ -57,7 +53,6 @@ const Dashboard = () => {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  // Monthly spending trend
   const monthlySpending = journeys.reduce((acc, journey) => {
     if (journey.journey_date) {
       const month = new Date(journey.journey_date).toLocaleString("default", {
@@ -68,14 +63,12 @@ const Dashboard = () => {
     return acc;
   }, {});
 
-  // Helper function to format date
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  // Get most common status safely
   const mostCommonStatus =
     Object.entries(statusCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
