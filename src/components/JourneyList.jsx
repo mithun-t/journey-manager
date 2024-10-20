@@ -11,7 +11,6 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-// Define columns for journey details
 const columns = [
   { id: "journey_date", label: "Journey Date", minWidth: 120 },
   { id: "train_number", label: "Train Number", minWidth: 100 },
@@ -37,7 +36,6 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
     setPage(0);
   };
 
-  // Helper function to format date
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "2-digit" };
     return new Date(dateString).toLocaleDateString("en-GB", options);
@@ -45,8 +43,6 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
 
   return (
     <Paper sx={{ width: "100%", overflowX: "auto" }}>
-      {" "}
-      {/* Enable horizontal scroll */}
       <TableContainer>
         <Table size="small" stickyHeader aria-label="sticky table">
           <TableHead>
@@ -66,7 +62,7 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
             {journeys
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((journey, index) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={journey.id}>
+                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                   {columns.map((column) => {
                     if (column.id === "actions") {
                       return (

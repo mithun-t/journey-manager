@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Box } from "@mui/material";
 
 const BackupRestore = () => {
-  // Backup data including journeys
   const handleBackup = () => {
     const masters = {
       trains: JSON.parse(localStorage.getItem("trains")) || [],
@@ -10,7 +9,7 @@ const BackupRestore = () => {
       statuses: JSON.parse(localStorage.getItem("statuses")) || [],
       berths: JSON.parse(localStorage.getItem("berths")) || [],
       payment_modes: JSON.parse(localStorage.getItem("payment_modes")) || [],
-      journeys: JSON.parse(localStorage.getItem("journeys")) || [], // Backup journey data
+      journeys: JSON.parse(localStorage.getItem("journeys")) || [],
     };
 
     const blob = new Blob([JSON.stringify(masters, null, 2)], {
@@ -18,11 +17,10 @@ const BackupRestore = () => {
     });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "journey_backup.json"; // JSON file download
+    link.download = "journey_backup.json";
     link.click();
   };
 
-  // Restore data including journeys
   const handleRestore = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -38,7 +36,7 @@ const BackupRestore = () => {
             "payment_modes",
             JSON.stringify(data.payment_modes || [])
           );
-          localStorage.setItem("journeys", JSON.stringify(data.journeys || [])); // Restore journey data
+          localStorage.setItem("journeys", JSON.stringify(data.journeys || []));
           alert("Data restored successfully!");
         }
       };
@@ -47,7 +45,16 @@ const BackupRestore = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" }, // Stack on small screens, align horizontally on medium+
+        gap: 2,
+        justifyContent: "center", // Center the buttons horizontally
+        alignItems: "center", // Center the buttons vertically
+        mt: 3, // Optional margin-top for spacing from other content
+      }}
+    >
       <Button variant="contained" color="primary" onClick={handleBackup}>
         Backup Master & Journey Data
       </Button>

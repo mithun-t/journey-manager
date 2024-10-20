@@ -7,7 +7,7 @@ function DropDownField({ label, value, name, handleChange, datas }) {
       select
       label={label}
       name={name}
-      value={value || ""} // Ensure value is set to an empty string if undefined
+      value={value || ""}
       onChange={handleChange}
       fullWidth
       size="small"
