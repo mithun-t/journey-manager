@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { TextField, Button, List, ListItem, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -8,16 +8,16 @@ const MasterForm = (props) => {
   const [masterData, setMasterData] = useState({ name: "" });
   const [editingMaster, setEditingMaster] = useState(null);
 
-  // Fetch data from localStorage
-  useEffect(() => {
-    fetchMasters();
-  }, []);
-
-  const fetchMasters = () => {
+  // Fetch data from localStorage using useCallback
+  const fetchMasters = useCallback(() => {
     const storedMasters =
       JSON.parse(localStorage.getItem(props.endpoint)) || [];
     setMasters(storedMasters);
-  };
+  }, [props.endpoint]);
+
+  useEffect(() => {
+    fetchMasters();
+  }, [fetchMasters]); // Include fetchMasters in the dependency array
 
   const handleChange = (e) => {
     setMasterData({ ...masterData, [e.target.name]: e.target.value });
