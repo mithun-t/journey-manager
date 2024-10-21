@@ -1,7 +1,22 @@
+# Journey Manager
+
+This project is a Journey Manager web app built with React JS, Material UI, and local storage for managing journey details. The app allows users to track train or bus journeys, view upcoming and completed journeys, and manage journey details like seat number, PNR, payment mode, and more.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Project Structure:
+  	- Frontend: React JS
+    - UI Framework: Material UI
+    - Storage: Local Storage
+
+## Features:
+  	- Add and track upcoming and completed journeys.
+    - Manage details like train number, coach, seat, journey status, payment mode, and more.
+    - Filter journeys based on journey status (upcoming/completed).
+    - Save and retrieve journey details from local storage.
+    
 ## Available Scripts
 
 In the project directory, you can run:
