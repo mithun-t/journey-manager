@@ -8,7 +8,6 @@ const MasterForm = (props) => {
   const [masterData, setMasterData] = useState({ name: "" });
   const [editingMaster, setEditingMaster] = useState(null);
 
-  // Fetch data from localStorage using useCallback
   const fetchMasters = useCallback(() => {
     const storedMasters =
       JSON.parse(localStorage.getItem(props.endpoint)) || [];
@@ -17,7 +16,7 @@ const MasterForm = (props) => {
 
   useEffect(() => {
     fetchMasters();
-  }, [fetchMasters]); // Include fetchMasters in the dependency array
+  }, [fetchMasters]);
 
   const handleChange = (e) => {
     setMasterData({ ...masterData, [e.target.name]: e.target.value });
