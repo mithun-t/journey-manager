@@ -11,18 +11,6 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const columns = [
-  { id: "journey_date", label: "Journey Date", minWidth: 120 },
-  { id: "train_number", label: "Train Number", minWidth: 100 },
-  { id: "pnr_number", label: "PNR Number", minWidth: 100 },
-  { id: "status", label: "Status", minWidth: 100 },
-  { id: "berth", label: "Berth", minWidth: 100 },
-  { id: "price", label: "Price", minWidth: 100, align: "right" },
-  { id: "payment_mode", label: "Payment Mode", minWidth: 150 },
-  { id: "journey_status", label: "Journey Status", minWidth: 150 },
-  { id: "actions", label: "Actions", minWidth: 100 },
-];
-
 export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -47,15 +35,17 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
         <Table size="small" stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align || "left"}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
+              <TableCell style={{ minWidth: 120 }}>Journey Date</TableCell>
+              <TableCell style={{ minWidth: 100 }}>Train Number</TableCell>
+              <TableCell style={{ minWidth: 100 }}>PNR Number</TableCell>
+              <TableCell style={{ minWidth: 100 }}>Status</TableCell>
+              <TableCell style={{ minWidth: 100 }}>Berth</TableCell>
+              <TableCell style={{ minWidth: 100, textAlign: "right" }}>
+                Price
+              </TableCell>
+              <TableCell style={{ minWidth: 150 }}>Payment Mode</TableCell>
+              <TableCell style={{ minWidth: 150 }}>Journey Status</TableCell>
+              <TableCell style={{ minWidth: 100 }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -63,39 +53,40 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((journey, index) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                  {columns.map((column) => {
-                    if (column.id === "actions") {
-                      return (
-                        <TableCell key={column.id}>
-                          <IconButton
-                            onClick={() => handleEdit(index)}
-                            aria-label="edit"
-                            color="primary"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => handleDelete(index)}
-                            aria-label="delete"
-                            color="error"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      );
-                    } else {
-                      return (
-                        <TableCell
-                          key={column.id}
-                          align={column.align || "left"}
-                        >
-                          {column.id === "journey_date"
-                            ? formatDate(journey[column.id])
-                            : journey[column.id]}
-                        </TableCell>
-                      );
-                    }
-                  })}
+                  <TableCell>{formatDate(journey.journey_date)}</TableCell>
+                  <TableCell>{journey.train_number}</TableCell>
+                  <TableCell>
+                    <a
+                      href={`https://www.confirmtkt.com/pnr-status/${journey.pnr_number}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "inherit", textDecoration: "none" }}
+                    >
+                      {journey.pnr_number}
+                    </a>
+                  </TableCell>
+
+                  <TableCell>{journey.status}</TableCell>
+                  <TableCell>{journey.berth}</TableCell>
+                  <TableCell align="right">{journey.price}</TableCell>
+                  <TableCell>{journey.payment_mode}</TableCell>
+                  <TableCell>{journey.journey_status}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => handleEdit(index)}
+                      aria-label="edit"
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDelete(index)}
+                      aria-label="delete"
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
