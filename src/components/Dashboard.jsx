@@ -74,15 +74,20 @@ const Dashboard = () => {
 
   const today = new Date();
 
-  const upcomingJourneys = journeys.filter(
-    (journey) =>
-      new Date(journey.journey_date) >= today && journey.status !== "Completed"
-  );
+  const upcomingJourneys = journeys
+    .filter(
+      (journey) =>
+        new Date(journey.journey_date) >= today &&
+        journey.status !== "Completed"
+    )
+    .slice(0, 5);
 
-  const completedJourneys = journeys.filter(
-    (journey) =>
-      journey.status === "Completed" || new Date(journey.journey_date) < today
-  );
+  const completedJourneys = journeys
+    .filter(
+      (journey) =>
+        journey.status === "Completed" || new Date(journey.journey_date) < today
+    )
+    .slice(0, 5);
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
