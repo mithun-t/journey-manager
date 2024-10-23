@@ -10,10 +10,14 @@ import TableRow from "@mui/material/TableRow";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch"; // Switched to use Switch component
+import Grid from "@mui/material/Grid";
 
 export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [showCompleted, setShowCompleted] = React.useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -29,8 +33,28 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
     return new Date(dateString).toLocaleDateString("en-GB", options);
   };
 
+  const handleSwitchChange = (e) => {
+    setShowCompleted(e.target.checked);
+  };
+
+  const filteredJourneys = showCompleted
+    ? journeys
+    : journeys.filter((journey) => journey.journey_status !== "Completed");
+
   return (
     <Paper sx={{ width: "100%", overflowX: "auto" }}>
+      <Grid container justifyContent="flex-end" padding={2}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={showCompleted}
+              onChange={handleSwitchChange}
+              color="primary"
+            />
+          }
+          label="Show Completed Journeys"
+        />
+      </Grid>
       <TableContainer>
         <Table size="small" stickyHeader aria-label="sticky table">
           <TableHead>
@@ -44,12 +68,13 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
                 Price
               </TableCell>
               <TableCell style={{ minWidth: 150 }}>Payment Mode</TableCell>
+              <TableCell style={{ minWidth: 120 }}>Booked Date</TableCell>
               <TableCell style={{ minWidth: 150 }}>Journey Status</TableCell>
               <TableCell style={{ minWidth: 100 }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {journeys
+            {filteredJourneys
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((journey, index) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
@@ -65,11 +90,11 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
                       {journey.pnr_number}
                     </a>
                   </TableCell>
-
                   <TableCell>{journey.status}</TableCell>
                   <TableCell>{journey.berth}</TableCell>
                   <TableCell align="right">{journey.price}</TableCell>
                   <TableCell>{journey.payment_mode}</TableCell>
+                  <TableCell>{formatDate(journey.booked_date)}</TableCell>
                   <TableCell>{journey.journey_status}</TableCell>
                   <TableCell>
                     <IconButton
@@ -95,7 +120,7 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={journeys.length}
+        count={filteredJourneys.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -34,6 +34,12 @@ const Dashboard = () => {
     }
     return acc;
   }, {});
+  const berthCounts = journeys.reduce((acc, journey) => {
+    if (journey.berth) {
+      acc[journey.berth] = (acc[journey.berth] || 0) + 1;
+    }
+    return acc;
+  }, {});
 
   const paymentModes = journeys.reduce((acc, journey) => {
     if (journey.payment_mode) {
@@ -71,6 +77,9 @@ const Dashboard = () => {
 
   const mostCommonStatus =
     Object.entries(statusCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+
+  const mostCommonBerths =
+    Object.entries(berthCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
   const today = new Date();
 
@@ -117,8 +126,8 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Paper sx={{ p: 2, textAlign: "center" }}>
-            <Typography variant="h6">Most Common Status</Typography>
-            <Typography variant="h4">{mostCommonStatus}</Typography>
+            <Typography variant="h6">Most Common Berths</Typography>
+            <Typography variant="h4">{mostCommonBerths}</Typography>
           </Paper>
         </Grid>
       </Grid>

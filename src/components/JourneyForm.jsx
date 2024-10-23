@@ -29,7 +29,15 @@ function JourneyForm({
     const storedBerths = JSON.parse(localStorage.getItem("berths")) || [];
     const storedPaymentModes =
       JSON.parse(localStorage.getItem("payment_modes")) || [];
-
+    if (
+      storedTrains.length === 0 &&
+      storedStations.length === 0 &&
+      storedStatuses.length === 0 &&
+      storedBerths.length === 0 &&
+      storedPaymentModes.length === 0
+    ) {
+      alert("Add your Train, Station, etc datas in Master tab");
+    }
     setTrains(
       storedTrains.length > 0
         ? storedTrains
