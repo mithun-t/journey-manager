@@ -30,11 +30,78 @@ function JourneyForm({
     const storedPaymentModes =
       JSON.parse(localStorage.getItem("payment_modes")) || [];
 
-    setTrains(storedTrains);
-    setStations(storedStations);
-    setStatuses(storedStatuses);
-    setBerths(storedBerths);
-    setPaymentModes(storedPaymentModes);
+    setTrains(
+      storedTrains.length > 0
+        ? storedTrains
+        : [
+            {
+              name: "Train A",
+            },
+            {
+              name: "Train B",
+            },
+          ]
+    );
+    setStations(
+      storedStations.length > 0
+        ? storedStations
+        : [
+            {
+              name: "Station A",
+            },
+            {
+              name: "Station B",
+            },
+          ]
+    );
+    setStatuses(
+      storedStatuses.length > 0
+        ? storedStatuses
+        : [
+            {
+              name: "CNF",
+            },
+            {
+              name: "RAC",
+            },
+            {
+              name: "WL",
+            },
+          ]
+    );
+    setBerths(
+      storedBerths.length > 0
+        ? storedBerths
+        : [
+            {
+              name: "Upper Berth",
+            },
+            {
+              name: "Middle Berth",
+            },
+            {
+              name: "Lower Berth",
+            },
+            {
+              name: "Side Upper",
+            },
+            {
+              name: "Side Lower",
+            },
+          ]
+    );
+    setPaymentModes(
+      storedPaymentModes.length > 0
+        ? storedPaymentModes
+        : [
+            {
+              name: "UPI",
+            },
+            {
+              name: "Credit Card",
+            },
+          ]
+    );
   }, []);
 
   const handleCheckboxChange = (e) => {
