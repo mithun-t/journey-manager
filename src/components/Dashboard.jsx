@@ -75,9 +75,6 @@ const Dashboard = () => {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  const mostCommonStatus =
-    Object.entries(statusCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
-
   const mostCommonBerths =
     Object.entries(berthCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
