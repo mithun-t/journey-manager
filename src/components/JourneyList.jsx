@@ -1,4 +1,5 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,13 +12,48 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch"; // Switched to use Switch component
+import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [showCompleted, setShowCompleted] = React.useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [statuses, setStatuses] = useState({});
+  const [loadingStatus, setLoadingStatus] = useState(false);
+
+  useEffect(() => {
+    fetchAllPnrStatuses();
+  }, [journeys]);
+
+  const fetchAllPnrStatuses = async () => {
+    setLoadingStatus(true);
+    try {
+      const statusesFetched = {};
+      for (const journey of journeys) {
+        const response = await fetchPnrStatus(journey.pnr_number);
+        statusesFetched[journey.pnr_number] = response;
+      }
+      setStatuses(statusesFetched);
+    } catch (error) {
+      console.error("Failed to fetch PNR statuses:", error);
+    } finally {
+      setLoadingStatus(false);
+    }
+  };
+
+  const fetchPnrStatus = async (pnr) => {
+    try {
+      const response = await axios.get("http://localhost:8000/status/", {
+        params: { pnr: pnr },
+      });
+      return response.data.PassengerStatus[0].CurrentStatus;
+    } catch (error) {
+      console.error(`Failed to fetch status for PNR ${pnr}`, error);
+      return "Error";
+    }
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -62,7 +98,8 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
               <TableCell style={{ minWidth: 120 }}>Journey Date</TableCell>
               <TableCell style={{ minWidth: 100 }}>Train Number</TableCell>
               <TableCell style={{ minWidth: 100 }}>PNR Number</TableCell>
-              <TableCell style={{ minWidth: 100 }}>Status</TableCell>
+              <TableCell style={{ minWidth: 100 }}>Booking Status</TableCell>
+              <TableCell style={{ minWidth: 100 }}>Current Status</TableCell>
               <TableCell style={{ minWidth: 100 }}>Berth</TableCell>
               <TableCell style={{ minWidth: 100, textAlign: "right" }}>
                 Price
@@ -91,6 +128,13 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
                     </a>
                   </TableCell>
                   <TableCell>{journey.status}</TableCell>
+                  <TableCell>
+                    {loadingStatus ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      statuses[journey.pnr_number] || "Loading..."
+                    )}
+                  </TableCell>
                   <TableCell>{journey.berth}</TableCell>
                   <TableCell align="right">{journey.price}</TableCell>
                   <TableCell>{journey.payment_mode}</TableCell>
