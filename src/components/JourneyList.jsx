@@ -13,45 +13,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
+import { Tooltip } from "@mui/material";
 
 export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showCompleted, setShowCompleted] = useState(false);
-  // const [statuses, setStatuses] = useState({});
-  // const [loadingStatus, setLoadingStatus] = useState(false);
-
-  // useEffect(() => {
-  //   fetchAllPnrStatuses();
-  // }, [journeys]);
-
-  // const fetchAllPnrStatuses = async () => {
-  //   setLoadingStatus(true);
-  //   try {
-  //     const statusesFetched = {};
-  //     for (const journey of journeys) {
-  //       const response = await fetchPnrStatus(journey.pnr_number);
-  //       statusesFetched[journey.pnr_number] = response;
-  //     }
-  //     setStatuses(statusesFetched);
-  //   } catch (error) {
-  //     console.error("Failed to fetch PNR statuses:", error);
-  //   } finally {
-  //     setLoadingStatus(false);
-  //   }
-  // };
-
-  // const fetchPnrStatus = async (pnr) => {
-  //   try {
-  //     const response = await axios.get("http://localhost:8000/status/", {
-  //       params: { pnr: pnr },
-  //     });
-  //     return response.data.PassengerStatus[0].CurrentStatus;
-  //   } catch (error) {
-  //     console.error(`Failed to fetch status for PNR ${pnr}`, error);
-  //     return "Error";
-  //   }
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -97,7 +64,6 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
               <TableCell style={{ minWidth: 100 }}>Train Number</TableCell>
               <TableCell style={{ minWidth: 100 }}>PNR Number</TableCell>
               <TableCell style={{ minWidth: 100 }}>Booking Status</TableCell>
-              {/* <TableCell style={{ minWidth: 100 }}>Current Status</TableCell> */}
               <TableCell style={{ minWidth: 100 }}>Berth</TableCell>
               <TableCell style={{ minWidth: 100, textAlign: "right" }}>
                 Price
@@ -111,8 +77,8 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
           <TableBody>
             {filteredJourneys
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((journey, index) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+              .map((journey) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={journey.id}>
                   <TableCell>{formatDate(journey.journey_date)}</TableCell>
                   <TableCell>{journey.train_number}</TableCell>
                   <TableCell>
@@ -126,33 +92,30 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
                     </a>
                   </TableCell>
                   <TableCell>{journey.status}</TableCell>
-                  {/* <TableCell>
-                    {loadingStatus ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                      statuses[journey.pnr_number] || "Loading..."
-                    )}
-                  </TableCell> */}
                   <TableCell>{journey.berth}</TableCell>
                   <TableCell align="right">{journey.price}</TableCell>
                   <TableCell>{journey.payment_mode}</TableCell>
                   <TableCell>{formatDate(journey.booked_date)}</TableCell>
                   <TableCell>{journey.journey_status}</TableCell>
                   <TableCell>
-                    <IconButton
-                      onClick={() => handleEdit(index)}
-                      aria-label="edit"
-                      color="primary"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleDelete(index)}
-                      aria-label="delete"
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    <Tooltip title="Edit">
+                      <IconButton
+                        onClick={() => handleEdit(journey.id)} // Change to use journey.id
+                        aria-label="edit"
+                        color="primary"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton
+                        onClick={() => handleDelete(journey.id)} // Change to use journey.id
+                        aria-label="delete"
+                        color="error"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}

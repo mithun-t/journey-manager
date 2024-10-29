@@ -11,6 +11,8 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import JourneyList from "./JourneyList";
 
+let nextId = 1; // Initialize a counter for unique IDs
+
 function JourneyApp() {
   const [formData, setFormData] = useState({
     journey_date: "",
@@ -40,7 +42,7 @@ function JourneyApp() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentJourneyIndex, setCurrentJourneyIndex] = useState(null);
+  const [currentJourneyId, setCurrentJourneyId] = useState(null); // Change from index to id
 
   const toggleDialog = () => {
     setIsDialogOpen((prev) => !prev);
@@ -58,13 +60,15 @@ function JourneyApp() {
     e.preventDefault();
     let updatedJourneys;
 
-    if (isEditing && currentJourneyIndex !== null) {
-      updatedJourneys = [...journeys];
-      updatedJourneys[currentJourneyIndex] = formData;
+    if (isEditing && currentJourneyId !== null) {
+      updatedJourneys = journeys.map((journey) =>
+        journey.id === currentJourneyId ? { ...journey, ...formData } : journey
+      );
       setIsEditing(false);
-      setCurrentJourneyIndex(null);
+      setCurrentJourneyId(null);
     } else {
-      updatedJourneys = [...journeys, formData];
+      const newJourney = { id: nextId++, ...formData }; // Assign unique id
+      updatedJourneys = [...journeys, newJourney];
     }
 
     setJourneys(updatedJourneys);
@@ -97,15 +101,18 @@ function JourneyApp() {
     });
   };
 
-  const handleEdit = (index) => {
-    setFormData(journeys[index]);
-    setCurrentJourneyIndex(index);
-    setIsEditing(true);
-    toggleDialog();
+  const handleEdit = (id) => {
+    const journeyToEdit = journeys.find((journey) => journey.id === id);
+    if (journeyToEdit) {
+      setFormData(journeyToEdit);
+      setCurrentJourneyId(id); // store the current journey id
+      setIsEditing(true);
+      toggleDialog();
+    }
   };
 
-  const handleDelete = (index) => {
-    const updatedJourneys = journeys.filter((_, i) => i !== index);
+  const handleDelete = (id) => {
+    const updatedJourneys = journeys.filter((journey) => journey.id !== id);
     setJourneys(updatedJourneys);
     localStorage.setItem("journeys", JSON.stringify(updatedJourneys));
     alert("Journey deleted successfully!");
