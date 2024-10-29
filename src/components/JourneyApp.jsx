@@ -113,8 +113,6 @@ function JourneyApp() {
 
   return (
     <div>
-      <h2>Journey List</h2>
-
       {journeys.length > 0 ? (
         <JourneyList
           journeys={journeys}
