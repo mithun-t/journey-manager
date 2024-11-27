@@ -13,9 +13,13 @@ const Dashboard = () => {
   const [journeys, setJourneys] = useState([]);
 
   useEffect(() => {
-    const storedJourneys = localStorage.getItem("journeys");
+    let storedJourneys = JSON.parse(localStorage.getItem("journeys"));
+    storedJourneys = storedJourneys.filter(
+      (journey) => journey.pnr_number !== ""
+    );
+
     if (storedJourneys) {
-      setJourneys(JSON.parse(storedJourneys));
+      setJourneys(storedJourneys);
     }
   }, []);
 
