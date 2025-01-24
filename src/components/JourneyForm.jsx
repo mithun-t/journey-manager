@@ -28,7 +28,7 @@ function JourneyForm({
     const storedStatuses = JSON.parse(localStorage.getItem("statuses")) || [];
     const storedBerths = JSON.parse(localStorage.getItem("berths")) || [];
     const storedPaymentModes =
-      JSON.parse(localStorage.getItem("payment_modes")) || [];
+      JSON.parse(localStorage.getItem("paymentModes")) || [];
     if (
       storedTrains.length === 0 &&
       storedStations.length === 0 &&
@@ -117,7 +117,7 @@ function JourneyForm({
     const updatedStatus = e.target.checked ? "Completed" : "Pending";
     handleChange({
       target: {
-        name: "journey_status",
+        name: "journeyStatus",
         value: updatedStatus,
       },
     });
@@ -129,10 +129,10 @@ function JourneyForm({
         <Grid item xs={12} sm={6}>
           <CustomTextField
             label="Journey Date"
-            name="journey_date"
+            name="journeyDate"
             type="date"
             value={
-              formData?.journey_date || new Date().toISOString().substr(0, 10)
+              formData?.journeyDate || new Date().toISOString().substr(0, 10)
             }
             onChange={handleChange}
             required
@@ -141,8 +141,8 @@ function JourneyForm({
         <Grid item xs={12} sm={6}>
           <DropDownField
             label="Train"
-            value={formData?.train_number || ""}
-            name="train_number"
+            value={formData?.trainNumber || ""}
+            name="trainNumber"
             handleChange={handleChange}
             datas={trains}
           />
@@ -150,8 +150,8 @@ function JourneyForm({
         <Grid item xs={12} sm={6}>
           <DropDownField
             label="Departure Station"
-            value={formData?.departure_station || ""}
-            name="departure_station"
+            value={formData?.departureStation || ""}
+            name="departureStation"
             handleChange={handleChange}
             datas={stations}
           />
@@ -159,8 +159,8 @@ function JourneyForm({
         <Grid item xs={12} sm={6}>
           <DropDownField
             label="Arrival Station"
-            value={formData?.arrival_station || ""}
-            name="arrival_station"
+            value={formData?.arrivalStation || ""}
+            name="arrivalStation"
             handleChange={handleChange}
             datas={stations}
           />
@@ -168,8 +168,8 @@ function JourneyForm({
         <Grid item xs={12} sm={6}>
           <CustomTextField
             label="PNR Number"
-            name="pnr_number"
-            value={formData?.pnr_number || ""}
+            name="pnrNumber"
+            value={formData?.pnrNumber || ""}
             onChange={handleChange}
             required
           />
@@ -205,10 +205,10 @@ function JourneyForm({
         <Grid item xs={12} sm={6}>
           <CustomTextField
             label="Booked Date"
-            name="booked_date"
+            name="bookedDate"
             type="date"
             value={
-              formData?.booked_date || new Date().toISOString().substr(0, 10)
+              formData?.bookedDate || new Date().toISOString().substr(0, 10)
             }
             onChange={handleChange}
             required
@@ -217,30 +217,18 @@ function JourneyForm({
         <Grid item xs={12} sm={6}>
           <DropDownField
             label="Payment Mode"
-            value={formData?.payment_mode || ""}
-            name="payment_mode"
+            value={formData?.paymentMode || ""}
+            name="paymentMode"
             handleChange={handleChange}
             datas={paymentModes}
           />
         </Grid>
-        {formData.payment_mode === "Credit" && (
-          <Grid item xs={12} sm={6}>
-            <CustomTextField
-              label="Bill Date"
-              name="bill_date"
-              type="date"
-              value={formData?.bill_date || ""}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-        )}
         <Grid item xs={12}>
           <FormControlLabel
             control={
               <Checkbox
-                name="journey_status_checked"
-                checked={formData.journey_status_checked || false}
+                name="journeyStatusChecked"
+                checked={formData.journeyStatusChecked || false}
                 onChange={handleCheckboxChange}
               />
             }
@@ -248,13 +236,13 @@ function JourneyForm({
               <Typography
                 variant="h6"
                 sx={{
-                  color: formData?.journey_status_checked
+                  color: formData?.journeyStatusChecked
                     ? "lightgreen"
                     : "orange",
                 }}
               >
                 Journey Status:{" "}
-                {formData?.journey_status_checked ? "Completed" : "Pending"}
+                {formData?.journeyStatusChecked ? "Completed" : "Pending"}
               </Typography>
             }
           />

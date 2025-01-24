@@ -8,19 +8,21 @@ import {
   ListItem,
   Chip,
 } from "@mui/material";
+import axios from "axios";
 
 const Dashboard = () => {
   const [journeys, setJourneys] = useState([]);
 
   useEffect(() => {
-    let storedJourneys = JSON.parse(localStorage.getItem("journeys"));
-    storedJourneys = storedJourneys.filter(
-      (journey) => journey.pnr_number !== ""
-    );
-
-    if (storedJourneys) {
-      setJourneys(storedJourneys);
-    }
+    const GetJourneys = async () => {
+      const response = await axios.get("http://localhost:5283/api/Journey");
+      const journeys = response.data;
+      const sortedJourneys = journeys
+        ? journeys.sort((a, b) => a.journeyDate.localeCompare(b.journeyDate))
+        : [];
+      setJourneys(sortedJourneys);
+    };
+    GetJourneys();
   }, []);
 
   const totalJourneys = journeys.length;
@@ -46,15 +48,15 @@ const Dashboard = () => {
   }, {});
 
   const paymentModes = journeys.reduce((acc, journey) => {
-    if (journey.payment_mode) {
-      acc[journey.payment_mode] = (acc[journey.payment_mode] || 0) + 1;
+    if (journey.paymentMode) {
+      acc[journey.paymentMode] = (acc[journey.paymentMode] || 0) + 1;
     }
     return acc;
   }, {});
 
   const routes = journeys.reduce((acc, journey) => {
-    if (journey.departure_station && journey.arrival_station) {
-      const route = `${journey.departure_station} - ${journey.arrival_station}`;
+    if (journey.departureStation && journey.arrivalStation) {
+      const route = `${journey.departureStation} - ${journey.arrivalStation}`;
       acc[route] = (acc[route] || 0) + 1;
     }
     return acc;
@@ -64,8 +66,8 @@ const Dashboard = () => {
     .slice(0, 5);
 
   const monthlySpending = journeys.reduce((acc, journey) => {
-    if (journey.journey_date) {
-      const month = new Date(journey.journey_date).toLocaleString("default", {
+    if (journey.journeyDate) {
+      const month = new Date(journey.journeyDate).toLocaleString("default", {
         month: "long",
       });
       acc[month] = (acc[month] || 0) + parseFloat(journey.price || 0);
@@ -87,15 +89,14 @@ const Dashboard = () => {
   const upcomingJourneys = journeys
     .filter(
       (journey) =>
-        new Date(journey.journey_date) >= today &&
-        journey.status !== "Completed"
+        new Date(journey.journeyDate) >= today && journey.status !== "Completed"
     )
     .slice(0, 5);
 
   const completedJourneys = journeys
     .filter(
       (journey) =>
-        journey.status === "Completed" || new Date(journey.journey_date) < today
+        journey.status === "Completed" || new Date(journey.journeyDate) < today
     )
     .slice(0, 5);
 
@@ -148,12 +149,12 @@ const Dashboard = () => {
                     sx={{ flexDirection: "column", alignItems: "flex-start" }}
                   >
                     <Typography variant="subtitle1">
-                      {journey.train_number || "N/A"}
+                      {journey.trainNumber || "N/A"}
                     </Typography>
                     <Typography variant="body2">
-                      {formatDate(journey.journey_date)} •{" "}
-                      {journey.departure_station || "N/A"} to{" "}
-                      {journey.arrival_station || "N/A"}
+                      {formatDate(journey.journeyDate)} •{" "}
+                      {journey.departureStation || "N/A"} to{" "}
+                      {journey.arrivalStation || "N/A"}
                     </Typography>
                     <Box
                       sx={{
@@ -197,12 +198,12 @@ const Dashboard = () => {
                     sx={{ flexDirection: "column", alignItems: "flex-start" }}
                   >
                     <Typography variant="subtitle1">
-                      {journey.train_number || "N/A"}
+                      {journey.trainNumber || "N/A"}
                     </Typography>
                     <Typography variant="body2">
-                      {formatDate(journey.journey_date)} •{" "}
-                      {journey.departure_station || "N/A"} to{" "}
-                      {journey.arrival_station || "N/A"}
+                      {formatDate(journey.journeyDate)} •{" "}
+                      {journey.departureStation || "N/A"} to{" "}
+                      {journey.arrivalStation || "N/A"}
                     </Typography>
                     <Box
                       sx={{

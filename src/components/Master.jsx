@@ -19,7 +19,7 @@ const Master = () => {
           <MasterForm endpoint="berths" name="Berth" />
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <MasterForm endpoint="payment_modes" name="Payment Mode" />
+          <MasterForm endpoint="paymentModes" name="Payment Mode" />
         </Grid>
       </Grid>
     </>

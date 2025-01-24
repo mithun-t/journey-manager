@@ -8,7 +8,7 @@ const BackupRestore = () => {
       stations: JSON.parse(localStorage.getItem("stations")) || [],
       statuses: JSON.parse(localStorage.getItem("statuses")) || [],
       berths: JSON.parse(localStorage.getItem("berths")) || [],
-      payment_modes: JSON.parse(localStorage.getItem("payment_modes")) || [],
+      paymentModes: JSON.parse(localStorage.getItem("paymentModes")) || [],
       journeys: JSON.parse(localStorage.getItem("journeys")) || [],
     };
 
@@ -33,8 +33,8 @@ const BackupRestore = () => {
           localStorage.setItem("statuses", JSON.stringify(data.statuses || []));
           localStorage.setItem("berths", JSON.stringify(data.berths || []));
           localStorage.setItem(
-            "payment_modes",
-            JSON.stringify(data.payment_modes || [])
+            "paymentModes",
+            JSON.stringify(data.paymentModes || [])
           );
           localStorage.setItem("journeys", JSON.stringify(data.journeys || []));
           alert("Data restored successfully!");

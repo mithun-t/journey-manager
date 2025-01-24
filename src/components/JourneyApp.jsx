@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import JourneyForm from "./JourneyForm";
 import {
   Fab,
@@ -10,36 +10,46 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import JourneyList from "./JourneyList";
-
-let nextId = 1; // Initialize a counter for unique IDs
+import axios from "axios";
 
 function JourneyApp() {
   const [formData, setFormData] = useState({
-    journey_date: "",
-    train_number: "",
-    departure_station: "",
-    arrival_station: "",
-    pnr_number: "",
+    journeyDate: "",
+    trainNumber: "",
+    departureStation: "",
+    arrivalStation: "",
+    pnrNumber: "",
     status: "",
     berth: "",
     price: "",
-    booked_date: "",
-    payment_mode: "",
-    bill_date: "",
-    journey_status_checked: false,
-    journey_status: "Pending",
+    bookedDate: "",
+    paymentMode: "",
+    journeyStatusChecked: false,
+    journeyStatus: "Pending",
     notes: "",
   });
 
-  const [journeys, setJourneys] = useState(() => {
-    const savedJourneys = localStorage.getItem("journeys");
-    return savedJourneys
-      ? JSON.parse(savedJourneys).sort((a, b) =>
-          a.journey_date.localeCompare(b.journey_date)
-        )
+  // const [journeys, setJourneys] = useState(() => {
+  //   const savedJourneys = localStorage.getItem("journeys");
+  //   return savedJourneys
+  //     ? JSON.parse(savedJourneys).sort((a, b) =>
+  //         a.journeyDate.localeCompare(b.journeyDate)
+  //       )
+  //     : [];
+  // });
+  const [journeys, setJourneys] = useState([]);
+  const GetJourneys = async () => {
+    const response = await axios.get("http://localhost:5283/api/Journey");
+    console.log("api", response);
+    const journeys = response.data;
+    const sortedJourneys = journeys
+      ? journeys.sort((a, b) => a.journeyDate.localeCompare(b.journeyDate))
       : [];
-  });
-
+    setJourneys(sortedJourneys);
+  };
+  useEffect(() => {
+    GetJourneys();
+  }, []);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentJourneyId, setCurrentJourneyId] = useState(null); // Change from index to id
@@ -54,25 +64,22 @@ function JourneyApp() {
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
+    console.log("value", value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let updatedJourneys;
 
-    if (isEditing && currentJourneyId !== null) {
-      updatedJourneys = journeys.map((journey) =>
-        journey.id === currentJourneyId ? { ...journey, ...formData } : journey
-      );
-      setIsEditing(false);
-      setCurrentJourneyId(null);
-    } else {
-      const newJourney = { id: nextId++, ...formData }; // Assign unique id
-      updatedJourneys = [...journeys, newJourney];
-    }
+    formData.journeyDate = new Date(formData.journeyDate).toISOString();
+    formData.bookedDate = new Date(formData.bookedDate).toISOString();
+    formData.price = parseFloat(formData.price);
+    console.log(formData);
+    return;
+    const saveJourney = async () => {
+      await axios.post("http://localhost:5283/api/Journey", formData);
+    };
+    saveJourney();
 
-    setJourneys(updatedJourneys);
-    localStorage.setItem("journeys", JSON.stringify(updatedJourneys));
     resetForm();
     toggleDialog();
     alert(
@@ -84,19 +91,18 @@ function JourneyApp() {
 
   const resetForm = () => {
     setFormData({
-      journey_date: "",
-      train_number: "",
-      departure_station: "",
-      arrival_station: "",
-      pnr_number: "",
+      journeyDate: "",
+      trainNumber: "",
+      departureStation: "",
+      arrivalStation: "",
+      pnrNumber: "",
       status: "",
       berth: "",
       price: "",
-      booked_date: "",
-      payment_mode: "",
-      bill_date: "",
-      journey_status_checked: false,
-      journey_status: "Pending",
+      bookedDate: "",
+      paymentMode: "",
+      journeyStatusChecked: false,
+      journeyStatus: "Pending",
       notes: "",
     });
   };

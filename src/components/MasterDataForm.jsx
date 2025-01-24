@@ -8,7 +8,7 @@ function MasterDataForm() {
     { endpoint: "stations", name: "Station" },
     { endpoint: "statuses", name: "Status" },
     { endpoint: "berths", name: "Berth" },
-    { endpoint: "payment_modes", name: "Payment Mode" },
+    { endpoint: "paymentModes", name: "Payment Mode" },
   ];
 
   return (

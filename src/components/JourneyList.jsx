@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,22 +13,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
-import {
-  Tooltip,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Typography,
-} from "@mui/material";
+import { Tooltip } from "@mui/material";
 
 export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showCompleted, setShowCompleted] = useState(false);
-  const [pnrData, setPnrData] = useState(null);
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleChangePage = (event, newPage) => setPage(newPage);
 
@@ -45,33 +34,9 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
     return new Date(dateString).toLocaleDateString("en-GB", options);
   };
 
-  const fetchPnrStatus = async (pnrNumber) => {
-    const options = {
-      method: "GET",
-      url: `https://irctc-indian-railway-pnr-status.p.rapidapi.com/getPNRStatus/${pnrNumber}`,
-      headers: {
-        "x-rapidapi-key": "8b3794ddb1msh97fb1a307bd5b83p1c2625jsn58f5c00c04d3",
-        "x-rapidapi-host": "irctc-indian-railway-pnr-status.p.rapidapi.com",
-      },
-    };
-
-    try {
-      setLoading(true);
-      const response = await axios.request(options);
-      console.log(response);
-      setPnrData(response.data);
-      setDialogOpen(true);
-    } catch (error) {
-      console.error("Error fetching PNR status:", error);
-      alert("Failed to fetch PNR Status. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const filteredJourneys = showCompleted
     ? journeys
-    : journeys.filter((journey) => journey.journey_status !== "Completed");
+    : journeys.filter((journey) => journey.journeyStatus !== "Completed");
 
   return (
     <Paper sx={{ width: "100%", overflowX: "auto" }}>
@@ -104,7 +69,6 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
               <TableCell>Booked Date</TableCell>
               <TableCell>Journey Status</TableCell>
               <TableCell>Actions</TableCell>
-              <TableCell>PNR Status</TableCell>
             </TableRow>
           </TableHead>
 
@@ -113,15 +77,15 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((journey) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={journey.id}>
-                  <TableCell>{formatDate(journey.journey_date)}</TableCell>
-                  <TableCell>{journey.train_number}</TableCell>
-                  <TableCell>{journey.pnr_number}</TableCell>
+                  <TableCell>{formatDate(journey.journeyDate)}</TableCell>
+                  <TableCell>{journey.trainNumber}</TableCell>
+                  <TableCell>{journey.pnrNumber}</TableCell>
                   <TableCell>{journey.status}</TableCell>
                   <TableCell>{journey.berth}</TableCell>
                   <TableCell align="right">{journey.price}</TableCell>
-                  <TableCell>{journey.payment_mode}</TableCell>
-                  <TableCell>{formatDate(journey.booked_date)}</TableCell>
-                  <TableCell>{journey.journey_status}</TableCell>
+                  <TableCell>{journey.paymentMode}</TableCell>
+                  <TableCell>{formatDate(journey.bookedDate)}</TableCell>
+                  <TableCell>{journey.journeyStatus}</TableCell>
                   <TableCell>
                     <Tooltip title="Edit">
                       <IconButton
@@ -142,17 +106,6 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
                       </IconButton>
                     </Tooltip>
                   </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      color="secondary"
-                      onClick={() => fetchPnrStatus(journey.pnr_number)}
-                      disabled={loading}
-                    >
-                      {loading ? "Loading..." : "Check"}
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -169,27 +122,6 @@ export default function JourneyTable({ journeys, handleEdit, handleDelete }) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
-      {/* PNR Status Dialog */}
-      <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>PNR Status Details</DialogTitle>
-        <DialogContent>
-          {pnrData ? (
-            <Typography>
-              <strong>Train Name:</strong> {pnrData.data.trainName} <br />
-              <strong>Train Number:</strong> {pnrData.data.trainNumber} <br />
-              <strong>Date of Journey:</strong> {pnrData.data.dateOfJourney}{" "}
-              <br />
-              <strong>Chart Status:</strong> {pnrData.data.chartStatus} <br />
-              <strong>Passenger Status:</strong>{" "}
-              {pnrData.data.passengerList[0]?.currentStatusDetails} <br />
-              <strong>Booking Fare:</strong> ₹{pnrData.data.bookingFare}
-            </Typography>
-          ) : (
-            <Typography>Unable to fetch PNR details.</Typography>
-          )}
-        </DialogContent>
-      </Dialog>
     </Paper>
   );
 }
