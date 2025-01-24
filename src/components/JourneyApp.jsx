@@ -29,14 +29,6 @@ function JourneyApp() {
     notes: "",
   });
 
-  // const [journeys, setJourneys] = useState(() => {
-  //   const savedJourneys = localStorage.getItem("journeys");
-  //   return savedJourneys
-  //     ? JSON.parse(savedJourneys).sort((a, b) =>
-  //         a.journeyDate.localeCompare(b.journeyDate)
-  //       )
-  //     : [];
-  // });
   const [journeys, setJourneys] = useState([]);
   const GetJourneys = async () => {
     const response = await axios.get("http://localhost:5283/api/Journey");
