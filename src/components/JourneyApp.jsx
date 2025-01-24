@@ -40,7 +40,6 @@ function JourneyApp() {
   const [journeys, setJourneys] = useState([]);
   const GetJourneys = async () => {
     const response = await axios.get("http://localhost:5283/api/Journey");
-    console.log("api", response);
     const journeys = response.data;
     const sortedJourneys = journeys
       ? journeys.sort((a, b) => a.journeyDate.localeCompare(b.journeyDate))
@@ -73,12 +72,23 @@ function JourneyApp() {
     formData.journeyDate = new Date(formData.journeyDate).toISOString();
     formData.bookedDate = new Date(formData.bookedDate).toISOString();
     formData.price = parseFloat(formData.price);
-    console.log(formData);
-    return;
-    const saveJourney = async () => {
-      await axios.post("http://localhost:5283/api/Journey", formData);
-    };
-    saveJourney();
+    formData.journeyStatusChecked = formData.journeyStatusChecked || false;
+
+    if (currentJourneyId) {
+      const updateJourney = async () => {
+        const response = await axios.put(
+          `http://localhost:5283/api/Journey/${currentJourneyId}`,
+          formData
+        );
+        console.log(response);
+      };
+      updateJourney();
+    } else {
+      const saveJourney = async () => {
+        await axios.post("http://localhost:5283/api/Journey", formData);
+      };
+      saveJourney();
+    }
 
     resetForm();
     toggleDialog();
