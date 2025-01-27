@@ -122,7 +122,10 @@ function JourneyApp() {
   const handleDelete = (id) => {
     const updatedJourneys = journeys.filter((journey) => journey.id !== id);
     setJourneys(updatedJourneys);
-    localStorage.setItem("journeys", JSON.stringify(updatedJourneys));
+    const deleteJourney = async () => {
+      await axios.delete(`http://localhost:5283/api/Journey/${id}`);
+    };
+    deleteJourney();
     alert("Journey deleted successfully!");
   };
 
