@@ -13,6 +13,7 @@ import JourneyList from "./JourneyList";
 import axios from "axios";
 
 function JourneyApp() {
+  const BASE_URL = "http://localhost:5283/api/Journey";
   const [formData, setFormData] = useState({
     journeyDate: "",
     trainNumber: "",
@@ -31,12 +32,17 @@ function JourneyApp() {
 
   const [journeys, setJourneys] = useState([]);
   const GetJourneys = async () => {
-    const response = await axios.get("http://localhost:5283/api/Journey");
+    const response = await axios.get(BASE_URL);
     const journeys = response.data;
     const sortedJourneys = journeys
       ? journeys.sort((a, b) => a.journeyDate.localeCompare(b.journeyDate))
       : [];
     setJourneys(sortedJourneys);
+  };
+  const GetJourneyByID = async (id) => {
+    const response = await axios.get(`${BASE_URL}/${id}`);
+    const journey = response.data;
+    return journey;
   };
   useEffect(() => {
     GetJourneys();
@@ -55,7 +61,6 @@ function JourneyApp() {
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
-    console.log("value", value);
   };
 
   const handleSubmit = (e) => {
@@ -76,16 +81,12 @@ function JourneyApp() {
 
     if (currentJourneyId) {
       const updateJourney = async () => {
-        const response = await axios.put(
-          `http://localhost:5283/api/Journey/${currentJourneyId}`,
-          formData
-        );
-        console.log(response);
+        await axios.put(`${BASE_URL}/${currentJourneyId}`, formData);
       };
       updateJourney();
     } else {
       const saveJourney = async () => {
-        await axios.post("http://localhost:5283/api/Journey", formData);
+        await axios.post(BASE_URL, formData);
       };
       saveJourney();
     }
@@ -97,6 +98,7 @@ function JourneyApp() {
         ? "Journey updated successfully!"
         : "Journey added successfully!"
     );
+    GetJourneys();
   };
 
   const resetForm = () => {
@@ -117,11 +119,10 @@ function JourneyApp() {
     });
   };
 
-  const handleEdit = (id) => {
-    let journeyToEdit = journeys.find((journey) => journey.id === id);
+  const handleEdit = async (id) => {
+    let journeyToEdit = await GetJourneyByID(id);
     journeyToEdit.bookedDate = journeyToEdit.bookedDate.substring(0, 10);
     journeyToEdit.journeyDate = journeyToEdit.journeyDate.substring(0, 10);
-    console.log("journeyToEdit", journeyToEdit);
     if (journeyToEdit) {
       setFormData(journeyToEdit);
       setCurrentJourneyId(id);
@@ -134,7 +135,7 @@ function JourneyApp() {
     const updatedJourneys = journeys.filter((journey) => journey.id !== id);
     setJourneys(updatedJourneys);
     const deleteJourney = async () => {
-      await axios.delete(`http://localhost:5283/api/Journey/${id}`);
+      await axios.delete(`${BASE_URL}/${id}`);
     };
     deleteJourney();
     alert("Journey deleted successfully!");
