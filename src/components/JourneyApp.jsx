@@ -60,9 +60,17 @@ function JourneyApp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    try {
+      formData.journeyDate = new Date(formData.journeyDate).toISOString();
+    } catch (error) {
+      formData.journeyDate = new Date().toISOString();
+    }
+    try {
+      formData.bookedDate = new Date(formData.bookedDate).toISOString();
+    } catch (error) {
+      formData.bookedDate = new Date().toISOString();
+    }
 
-    formData.journeyDate = new Date(formData.journeyDate).toISOString();
-    formData.bookedDate = new Date(formData.bookedDate).toISOString();
     formData.price = parseFloat(formData.price);
     formData.journeyStatusChecked = formData.journeyStatusChecked || false;
 
@@ -110,7 +118,10 @@ function JourneyApp() {
   };
 
   const handleEdit = (id) => {
-    const journeyToEdit = journeys.find((journey) => journey.id === id);
+    let journeyToEdit = journeys.find((journey) => journey.id === id);
+    journeyToEdit.bookedDate = journeyToEdit.bookedDate.substring(0, 10);
+    journeyToEdit.journeyDate = journeyToEdit.journeyDate.substring(0, 10);
+    console.log("journeyToEdit", journeyToEdit);
     if (journeyToEdit) {
       setFormData(journeyToEdit);
       setCurrentJourneyId(id);
