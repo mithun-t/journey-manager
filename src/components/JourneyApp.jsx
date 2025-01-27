@@ -113,7 +113,7 @@ function JourneyApp() {
     const journeyToEdit = journeys.find((journey) => journey.id === id);
     if (journeyToEdit) {
       setFormData(journeyToEdit);
-      setCurrentJourneyId(id); // store the current journey id
+      setCurrentJourneyId(id);
       setIsEditing(true);
       toggleDialog();
     }
