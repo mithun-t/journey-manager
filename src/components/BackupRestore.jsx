@@ -21,29 +21,6 @@ const BackupRestore = () => {
     link.click();
   };
 
-  const handleRestore = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const data = JSON.parse(event.target.result);
-        if (data) {
-          localStorage.setItem("trains", JSON.stringify(data.trains || []));
-          localStorage.setItem("stations", JSON.stringify(data.stations || []));
-          localStorage.setItem("statuses", JSON.stringify(data.statuses || []));
-          localStorage.setItem("berths", JSON.stringify(data.berths || []));
-          localStorage.setItem(
-            "paymentModes",
-            JSON.stringify(data.paymentModes || [])
-          );
-          localStorage.setItem("journeys", JSON.stringify(data.journeys || []));
-          alert("Data restored successfully!");
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
-
   return (
     <Box
       sx={{
@@ -57,15 +34,6 @@ const BackupRestore = () => {
     >
       <Button variant="contained" color="primary" onClick={handleBackup}>
         Backup Master & Journey Data
-      </Button>
-      <Button variant="contained" component="label" color="secondary">
-        Restore Master & Journey Data
-        <input
-          type="file"
-          hidden
-          accept="application/json"
-          onChange={handleRestore}
-        />
       </Button>
     </Box>
   );
