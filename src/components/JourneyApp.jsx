@@ -49,7 +49,7 @@ function JourneyApp() {
   }, []);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentJourneyId, setCurrentJourneyId] = useState(null); // Change from index to id
+  const [currentJourneyId, setCurrentJourneyId] = useState(null);
 
   const toggleDialog = () => {
     setIsDialogOpen((prev) => !prev);

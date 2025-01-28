@@ -93,11 +93,12 @@ const Dashboard = () => {
     )
     .slice(0, 5);
 
-  const completedJourneys = journeys
+  let completedJourneys = journeys
     .filter(
       (journey) =>
         journey.status === "Completed" || new Date(journey.journeyDate) < today
     )
+    .sort((a, b) => b.journeyDate.localeCompare(a.journeyDate))
     .slice(0, 5);
 
   return (
